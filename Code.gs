@@ -60,7 +60,9 @@ function writeRowToSheet() {
 }
 
 function buildDataForSheet(classInfo) {
-  var classType = getClassTypeName(classInfo.ride_type_id);
+  const classType = getClassTypeName(classInfo.ride_type_id);
+  const url = `https://members.onepeloton.com/classes/${classInfo.fitness_discipline}?modal=classDetailsModal&classId=${classInfo.id}`;
+
   var dataForSheet = [];
   dataForSheet.push([
     classInfo.title,
@@ -69,7 +71,9 @@ function buildDataForSheet(classInfo) {
     classInfo.duration / 60,
     classInfo.language.charAt(0).toUpperCase() + classInfo.language.slice(1),
     classInfo.overall_rating_avg * 100,
-    classInfo.difficulty_rating_avg
+    classInfo.difficulty_rating_avg,
+    classInfo.id,
+    url
   ]);
 
   return dataForSheet;
@@ -134,7 +138,7 @@ function getMatchingClassInfo(classId) {
 
 function createTrigger() {
   // Check spreadsheet every 10 minutes to avoid unecessary Peloton API hits
-  ScriptApp.newTrigger("updateSheet")
+  ScriptApp.newTrigger("writeRowToSheet")
            .timeBased().everyMinutes(1).create();
   Logger.log('Trigger created.');
 }
